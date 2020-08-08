@@ -27,6 +27,7 @@
 </div>
 
 <script src="vue.js"></script>
+<script src="axios.js"></script>
 
 <script>
 new Vue({
@@ -46,9 +47,14 @@ new Vue({
             kiasi:this.kiasi,
             description:this.description,
         }
-        this.matumizi.unshift(tumizi)
-        this.kiasi = ''
-        this.description = ''
+        //update database
+        axios.post('/expense-tracker/michakato.php',tumizi)
+        .then((response)=>{
+            this.matumizi = response.data
+            //update ui
+            this.kiasi = ''
+            this.description = ''
+        })
     },
     editTumizi(tumizi){
         this.editedTumizi = tumizi
@@ -67,8 +73,17 @@ new Vue({
         this.editMode = false
     },
     deleteTumizi(tumizi){
-        this.matumizi.splice(this.matumizi.indexOf(tumizi),2)
+        this.matumizi.splice(this.matumizi.indexOf(tumizi),1)
+    },
+    fetchMatumizi(){
+        axios.get('/expense-tracker/fetchdata.php')
+        .then((response)=>{
+            this.matumizi = response.data
+        })
     }
+   },
+   created(){
+       this.fetchMatumizi();
    }
 })
 </script>
